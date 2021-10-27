@@ -14,23 +14,30 @@ class Jackie{
     public int podiums;
     public int poles;
     public int fastests;
+
+    public int evtized { get; private set; }
+
+    public Jackie(string sor){var s = sor.Split();
+        year    = int.Parse(s[0]);  // verseny éve
+        races   = int.Parse(s[1]);  // versenyek száma az évben
+        wins    = int.Parse(s[2]);  // megnyert versenyek
+        podiums = int.Parse(s[3]);  // dobogós eredmények
+        poles   = int.Parse(s[4]);  // első helyről indulások száma
+        fastests = int.Parse(s[5]); // a leggyorsabb körök száma
+        evtized = int.Parse( s[0].Substring(2, 1) ) * 10;
+    }
 }
 class Program {
   public static void Main (string[] args) {
     var lista = new List<Jackie>();
     var f     = new StreamReader("jackie.txt");
     var elsosor = f.ReadLine();
-    while(!f.EndOfStream){
-        var sor = f.ReadLine().Split();
-        var data = new Jackie();
-        data.year     = int.Parse(sor[0]); // verseny éve
-        data.races    = int.Parse(sor[1]); // versenyek száma az évben
-        data.wins     = int.Parse(sor[2]); // megnyert versenyek
-        data.podiums  = int.Parse(sor[3]); //dobogós eredmények
-        data.poles    = int.Parse(sor[4]); //első helyről indulások száma
-        data.fastests = int.Parse(sor[5]); //a leggyorsabb körök száma
-        lista.Add(data);
+
+    while (!f.EndOfStream){
+            lista.Add(new Jackie(f.ReadLine()));
     }
+    f.Close();
+        
     // 3. feladat: {lista.Count}
     Console.WriteLine($"3. feladat: {lista.Count}");
 
@@ -39,20 +46,18 @@ class Program {
     Console.WriteLine($"4. feladat: {year}");
 
     // 5. feladat: évtizedenkénti sikerek
-    var ev_siker = (from sor in lista select (sor.year, sor.wins) );
     var statisztika = new Dictionary<int, int>();
-    foreach( var sor in ev_siker ){
-        var evtized = sor.Item1 % 100 / 10 * 10;
-        var siker   = sor.Item2;
-        if (statisztika.ContainsKey(evtized)) {      // ha az evtized mint kulcs benne van a statisztika szótárban
-                statisztika[evtized] += siker;                   // akkor a kulcshoz tartozó értékhez hozzáadja a siker-t
-        } 
-        else {                                   // egyébként
-            statisztika[evtized] = siker;                     // a statisztika szótárban létrehozza az evtized változó alapján az új kulcsot a siker értékkel
-        } 
+    foreach (var sor in lista){
+            if (statisztika.ContainsKey(sor.evtized)){ 
+                statisztika[sor.evtized] += sor.wins; 
+            }
+            else{   
+                statisztika[sor.evtized] = sor.wins;
+            }
     }
+    
     Console.WriteLine(    $"5. feladat: ");
-    foreach(var kulcs_ertek in statisztika){         // a foreach végiggyalogol a statisztika-n, a kulcs - érték párok a kulcs_ertek- be kerülnek
+    foreach(var kulcs_ertek in statisztika){ 
         Console.WriteLine($"        {kulcs_ertek.Key}-es évek {kulcs_ertek.Value} megnyert verseny");
         }
 
