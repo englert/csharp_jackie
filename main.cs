@@ -42,7 +42,11 @@ class Program {
     Console.WriteLine($"3. feladat: {lista.Count}");
 
     // 4. feladat: melyik évben indult a legtöbb versenyen?
-    var year = ( from sor in lista  orderby sor.races select sor.year ).Last();
+    var year = ( 
+        from sor in lista  
+        orderby sor.races 
+        select sor.year 
+        ).Last();
     Console.WriteLine($"4. feladat: {year}");
 
     // 5. feladat: évtizedenkénti sikerek
